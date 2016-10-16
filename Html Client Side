@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Student-Client</title>
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script>
+        $(function student () {
+            $("#btnGetStudents").click(function () {
+                jQuery.support.cors = true;
+                var id = $('#studentid').val();
+                $.ajax({
+                    url: 'http://localhost:1230/api/Student'+id ,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) { 
+                        Showdetail(data);  
+                    },
+                    error: function (x, y, z) {
+                        alert(x + '\n' + y + '\n' + z);
+                    }
+                });
+            });
+        });
+
+        function GetStudent() {
+            jQuery.support.cors = true;
+            var id = $('#studentid').val();
+            $.ajax({
+                url: 'http://localhost:1230/api/Student' + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    Showdetail(data);
+                },
+                error: function (x, y, z) {
+                    alert(x + '\n' + y + '\n' + z);
+
+                }
+            });
+        }
+
+        function Showdetail(Student) {
+            if (Student != null) {
+                var strResult = "<table><th>Id</th><th>Name</th><th>Roll No</th><th>Class</th>";
+                strResult += "<tr><td>" + Student.Id + "</td><td> " + Student.Name + "</td><td>" + Student.RollNo + "</td><td>" + Student.Class + "</td></tr>";
+                strResult += "</table>";
+                $("#divResult").html(strResult);
+                //var strResult = $("#Id").val();
+            }
+            else {
+                $("#divResult").html("No Results To Display");
+            }
+        }
+
+        //function Showdetail(Student) {
+        //    if (Student != null) {         
+        //        var strResult = "<table><th>Id</th><th>Name</th><th>RollNo</th><th>Class</th>";
+        //        //for (var i = 0; i < Student.length; i++) {
+        //            //strResult += "<tr><td>" + Student[i].Id + "</td><td> " + Student[i].Name + "</td><td>" + Student[i].RollNo + "</td><td>" + Student[i].Class + "</td></tr>";
+        //        strResult+= "<tr><td>" + Student.Id + "</td><td> " + Student.Name + "</td><td>" + Student.RollNo + "</td><td>" + Student.Class + "</td></tr>";
+                
+               
+        //        strResult+= "</table>";
+        //        $("#divResult").html(strResult);
+        //    }
+        //    else {
+        //        $("#divResult").html("No Results To Display");
+        //    }
+        //}
+
+        
+        function GetAllSudents() {
+            
+            //  alert("in GetAllAddresses");
+            jQuery.support.cors = true;
+            //  alert("befor ajax");
+
+            $.ajax({
+                url: 'http://localhost:1230/api/Student',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    //  alert("success");
+                    WriteResponse(data);
+                },
+                //error: function (x, y, z) {
+                error: function () {
+                    alert("error");
+                }
+            });
+            }
+        
+        function WriteResponse(Students) {
+            var strResult = "<table><th>Id</th><th>RollNo</th><th>Name</th><th>Class</th>";
+            $.each(Students, function (index, Student) {
+                strResult += "<tr><td>" + Student.Id + "</td><td> " + Student.RollNo + "</td><td>" + Student.Name + "</td><td>" + Student.Class + "</td><td><a href='http://localhost:1230/api/Student/'" + Student.Id + ">View</a></td><td><a href='http://localhost:1230/api/Student'" + Student.Id + ">Edit</a></td><td><a href='http://localhost:1230/api/Student'" + Student.Id + "'>Delete</a></td></tr>";
+            });
+            strResult += "</table>";
+            $("#divResult").html(strResult);
+        }
+
+
+       
+
+        function AddStudent() {
+            alert("Adding Student");
+            jQuery.support.cors = true;
+            var Student = {
+                //Id: $('#txtId').val(),
+                RollNo: $('#txtRoll').val(),
+                Name: $('#txtName').val(),
+                Class: $('#txtClass').val()
+            };
+            alert("Saving");
+            $.ajax({
+                url: 'http://localhost:1230/api/Student',
+                type: 'Post',
+                data: JSON.stringify(Student),
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    alert("Sucessfull");
+                    WriteResponse(data);
+                },
+                error: function () {
+                    alert("Error");
+                }
+            })
+        }
+
+        function DeleteStudent() {
+            jQuery.support.cors = true;
+            var id = $('#txtdeletstudent').val()
+
+            $.ajax({
+                url: 'http://localhost:1230/api/Student' +id,
+                type: 'DELETE',
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    alert("deleting");
+                    WriteResponse(data);
+                },
+                error:function(x,y,z){
+                    alert(x+'\n'+y+ '\n'+z);
+                }
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+    <table>
+        <tr>
+            <td><button  onclick="GetAllSudents(); return false;">Get All Students</button></td>
+        </tr>
+        <tr>
+            <td><button  id="btnGetStudents">Get Each Student</button></td>
+        </tr>
+        
+    </table>
+
+    <div id="divResult"></div>
+
+
+    <table>
+        <tr>
+            <td>Enter id: <input type="text" id="studentid" /></td>
+            <td><button onclick="GetStudent(); return false;">Get Student</button></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr><td>ID:</td><td><input type="text" id="txtId" /></td></tr>
+        <tr><td>RollNo:</td><td><input type="text" id="txtRoll" /></td></tr>
+        <tr><td>Name:</td><td><input type="text" id="txtName" /></td></tr>
+        <tr><td>Class:</td><td><input type="text" id="txtClass" /></td></tr>
+        <tr><td></td><td><button onclick="AddStudent(); return false;" >Add Student</button></td></tr>
+    </table>
+    <table>
+
+        <tr>
+            <td>Delete Student <input type="text" id="txtdeletstudent" /></td>
+            <td><button onclick="DeleteStudent(); return false">Delete Student</button></td>
+        </tr>
+    </table>
+</body>
+</html>
